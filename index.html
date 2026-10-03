@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text File Handling Simulator</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.28.2/full/pyodide.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="title-wrap">
+      <div class="file-icon">▤</div>
+      <div>
+        <h1>Text File Handling Simulator</h1>
+        <p>See how Python's file functions work step by step</p>
+      </div>
+    </div>
+    <button id="resetBtn" class="reset-btn">↻ Reset</button>
+  </header>
+
+  <main class="app">
+    <section class="file-panel panel">
+      <div class="panel-title">
+        <span>data.txt</span>
+        <button id="editFileBtn" class="icon-btn" title="Edit file">✎</button>
+      </div>
+
+      <div id="fileEditor" class="file-editor"></div>
+
+      <div class="file-stats">
+        <div>File size: <strong id="fileSize">0</strong> characters</div>
+        <div>Lines: <strong id="lineCount">0</strong></div>
+        <div>Current position (tell): <strong id="tellValue">0</strong></div>
+      </div>
+    </section>
+
+    <section class="command-panel panel">
+      <div class="panel-heading">
+        <span class="python-icon">🐍</span>
+        <h2>Python Command</h2>
+      </div>
+
+      <div class="command-row">
+        <code id="commandText" contenteditable="true" spellcheck="false">f = open("data.txt", "r")</code>
+        <button id="executeBtn" class="execute-btn">▶ Execute</button>
+      </div>
+
+      <div class="mode-area">
+        <div>
+          <label for="modeSelect">File Mode</label>
+          <select id="modeSelect">
+            <option value="r">r</option>
+            <option value="r+">r+</option>
+            <option value="w">w</option>
+            <option value="w+">w+</option>
+            <option value="a">a</option>
+            <option value="a+">a+</option>
+            <option value="x">x</option>
+            <option value="x+">x+</option>
+          </select>
+        </div>
+        <div id="modeDescription" class="mode-description"></div>
+      </div>
+    </section>
+
+    <section class="output-panel panel">
+      <div class="panel-heading output-heading">
+        <span>▸_</span>
+        <h2>Output</h2>
+      </div>
+      <pre id="output"></pre>
+    </section>
+
+    <section class="operations panel">
+      <div class="panel-heading">
+        <span>⚙</span>
+        <h2>File Operations</h2>
+      </div>
+
+      <div class="operation-grid">
+        <button data-op="read" class="blue">read()</button>
+        <button data-op="readline" class="blue">readline()</button>
+        <button data-op="readlines" class="blue">readlines()</button>
+
+        <button data-op="write" class="green">write(text)</button>
+        <button data-op="writelines" class="green">writelines(list)</button>
+        <button data-op="append" class="green">append</button>
+
+        <button data-op="seek" class="orange">seek(pos)</button>
+        <button data-op="tell" class="orange">tell()</button>
+        <button data-op="close" class="orange">close()</button>
+      </div>
+    </section>
+
+    <section class="tips panel">
+      <div class="tips-title">💡 <strong>Try this...</strong></div>
+      <ol>
+        <li>Open the file in different modes, including <b>x</b> and <b>x+</b>.</li>
+        <li>Click <b>read()</b> and see the returned value.</li>
+        <li>Try <b>readline()</b> multiple times.</li>
+        <li>Use <b>seek()</b> to move the pointer.</li>
+        <li>Try writing new text in a writable mode.</li>
+        <li>See how <b>with open()</b> automatically closes the file.</li>
+      </ol>
+    </section>
+
+    <section class="pointer-panel panel">
+      <div class="panel-heading">
+        <span>⌕</span>
+        <h2>Pointer View (Characters)</h2>
+      </div>
+      <div id="pointerView" class="pointer-view"></div>
+      <div class="pointer-position">Position: <strong id="pointerPosition">0</strong></div>
+    </section>
+
+    <section class="status-panel panel">
+      <div class="panel-heading">
+        <span>ⓘ</span>
+        <h2>Status / Explanation</h2>
+      </div>
+      <div class="status-row">
+        <span id="statusText">The file is ready. Select a mode and execute open().</span>
+        <span class="newline-note">Note: <b>\n</b> represents a single newline character.</span>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-card">
+      <h3 id="modalTitle">Input</h3>
+      <p id="modalMessage"></p>
+      <input id="modalInput" type="text" autocomplete="off">
+      <div class="modal-actions">
+        <button id="modalCancel">Cancel</button>
+        <button id="modalOk" class="execute-btn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
