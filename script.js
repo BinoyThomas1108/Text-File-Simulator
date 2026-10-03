@@ -198,16 +198,60 @@ __sim_real_open = builtins.open
 class __SimFile:
   def __init__(self, file):
     self._file = file
+    self._last_position = 0
     sim_open_files.append(self)
   def __enter__(self):
     self._file.__enter__()
+    self._last_position = self._file.tell()
     return self
   def __exit__(self, exc_type, exc_value, traceback):
+    try:
+      self._last_position = self._file.tell()
+    except Exception:
+      pass
     return self._file.__exit__(exc_type, exc_value, traceback)
   def __iter__(self):
-    return iter(self._file)
+    return self
   def __next__(self):
-    return next(self._file)
+    value = next(self._file)
+    try:
+      self._last_position = self._file.tell()
+    except Exception:
+      pass
+    return value
+  def read(self, *args, **kwargs):
+    value = self._file.read(*args, **kwargs)
+    self._last_position = self._file.tell()
+    return value
+  def readline(self, *args, **kwargs):
+    value = self._file.readline(*args, **kwargs)
+    self._last_position = self._file.tell()
+    return value
+  def readlines(self, *args, **kwargs):
+    value = self._file.readlines(*args, **kwargs)
+    self._last_position = self._file.tell()
+    return value
+  def write(self, *args, **kwargs):
+    value = self._file.write(*args, **kwargs)
+    self._last_position = self._file.tell()
+    return value
+  def writelines(self, *args, **kwargs):
+    value = self._file.writelines(*args, **kwargs)
+    self._last_position = self._file.tell()
+    return value
+  def seek(self, *args, **kwargs):
+    value = self._file.seek(*args, **kwargs)
+    self._last_position = self._file.tell()
+    return value
+  def tell(self):
+    self._last_position = self._file.tell()
+    return self._last_position
+  def close(self):
+    try:
+      self._last_position = self._file.tell()
+    except Exception:
+      pass
+    return self._file.close()
   def __getattr__(self, name):
     return getattr(self._file, name)
   def __repr__(self):
@@ -239,8 +283,12 @@ __sim_closed = None
 if sim_open_files:
   for __sim_file in reversed(sim_open_files):
     try:
-      __sim_pointer = __sim_file.tell()
-      __sim_closed = __sim_file.closed
+      if __sim_file.closed:
+        __sim_pointer = __sim_file._last_position
+        __sim_closed = True
+      else:
+        __sim_pointer = __sim_file.tell()
+        __sim_closed = False
       break
     except Exception:
       pass
